@@ -5,6 +5,7 @@ from django_countries.fields import CountryField
 
 class Country(models.Model):
     country = CountryField()
+    currency = models.CharField(max_length=3)
 
     def __str__(self):
         return self.country.name
