@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # apps
-    'intl_deployment.apps.IntlDeploymentConfig'
+    'intl_deployment.apps.IntlDeploymentConfig',
 
     # packages
     'django_countries',
