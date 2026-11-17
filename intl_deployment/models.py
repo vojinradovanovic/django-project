@@ -7,9 +7,8 @@ class TaxAuthority(models.Model):
     name = models.CharField(max_length=100)
 
     class Level(models.TextChoices):    # local enum class
-        NATIONAL = "National"
         FEDERAL = "Federal"
-        CANTONAL = "Cantonal"
+        REGIONAL = "Regional"
         LOCAL = "Local"
 
     level = models.CharField(max_length=10, choices=Level.choices)
@@ -20,7 +19,7 @@ class TaxAuthority(models.Model):
 class Country(models.Model):
     country = CountryField()
     currency = models.CharField(max_length=3)
-    tax_authority = models.ForeignKey(TaxAuthority, on_delete=models.CASCADE)
+    tax_authority = models.ForeignKey(TaxAuthority, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.country.name
@@ -28,7 +27,7 @@ class Country(models.Model):
 class Region(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    tax_authority = models.ForeignKey(TaxAuthority, on_delete=models.CASCADE)
+    tax_authority = models.ForeignKey(TaxAuthority, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -41,4 +40,4 @@ class TaxBracket(models.Model):
     min_salary_threshold = models.PositiveIntegerField()   # tax is applicable above this threshold
 
     def __str__(self):
-        return str(self.region.region_name) + ", " + str(self.tax_rate) + "%"
+        return str(self.tax_authority.name) + ", " + str(self.tax_rate) + "%"
