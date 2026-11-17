@@ -4,14 +4,15 @@ from .models import *
 
 # define admins
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ["country", "currency"]
+    list_display = ["country", "currency", "tax_authority"]
 
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ["region_name", "country"]
+    list_display = ["name", "country", "tax_authority"]
     list_filter = ["country"]
-    fields = ["region_name", "country"]
+    fields = ["name", "country", "tax_authority"]
 
 # Register models
 admin.site.register(Country, CountryAdmin)
 admin.site.register(Region, RegionAdmin)
+admin.site.register(TaxAuthority)
 admin.site.register(TaxBracket)
