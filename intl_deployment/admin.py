@@ -12,6 +12,6 @@ class RegionAdmin(admin.ModelAdmin):
     fields = ["region_name", "country"]
 
 # Register models
-admin.site.register(Country)
+admin.site.register(Country, CountryAdmin)
 admin.site.register(Region, RegionAdmin)
 admin.site.register(TaxBracket)
