@@ -4,14 +4,20 @@ from django_countries.fields import CountryField
 ### MODELS ###
 
 class Country(models.Model):
-    country_name = CountryField()
+    country = CountryField()
+
+    def __str__(self):
+        return self.country.name
 
 class Region(models.Model):
-    country_name = models.ForeignKey(Country, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
     region_name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.region_name
+
 class TaxBracket(models.Model):
-    region_name = models.ForeignKey(Region, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
     tax_rate = models.DecimalField(max_digits = 4, decimal_places = 2)  # tax percentage, from 00.00 to 99.99,
                                                                         # two decimal places
 
