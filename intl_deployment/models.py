@@ -23,3 +23,6 @@ class TaxBracket(models.Model):
                                                                         # two decimal places
 
     min_salary_threshold = models.PositiveIntegerField()   # tax is applicable above this threshold
+
+    def __str__(self):
+        return str(self.region.region_name) + ", " + str(self.tax_rate) + "%"
