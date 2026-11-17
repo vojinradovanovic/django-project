@@ -1,5 +1,5 @@
 """
-ASGI config for cost_estimate project.
+ASGI config for consultant_tool project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cost_estimate.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'consultant_tool.settings')
 
 application = get_asgi_application()
