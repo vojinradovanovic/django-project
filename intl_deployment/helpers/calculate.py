@@ -1,12 +1,13 @@
+from decimal import Decimal
 from ..models import *
 
 
 
 def calculate_tax(base, country, region, city):
-    if country == CountryField("Switzerland"):
+    if country.country.name == "Switzerland":
         return calculate_swiss_tax(base, region, city)
 
-    elif country == CountryField("United Kingdom"):
+    elif country.country.name == "United Kingdom":
         return calculate_uk_tax(base, region)
 
 
@@ -14,19 +15,22 @@ def calculate_tax(base, country, region, city):
 def calculate_swiss_tax(base, region, city):
     # initialisations: tax authorities, tax brackets, taxes
     tax_authorities = {
-        "federal": Country.objects.filter(country=CountryField("Switzerland")).tax_authority,
-        "cantonal": Region.objects.filter(region=region).tax_authority,
-        "municipal": City.objects.filter(city=city).tax_authority
+        "federal": Country.objects.get(country="CH").tax_authority,
+        "cantonal": region.tax_authority,
+        "municipal": city.tax_authority
     }
     tax_brackets = {
         key: TaxBracket.objects.filter(tax_authority=tax_authorities[key])
                 .order_by("-min_salary_threshold")
                 
-                for key in tax_authorities.keys
+                for key in tax_authorities.keys()
     }
     taxes = {
-        key: 0. for key in tax_authorities.keys
+        key: 0. for key in tax_authorities.keys()
     }
+
+    print("Hello")
+    print(tax_authorities)
 
     # calculate federal tax
     taxes["federal"] = traverse_tax_brackets(base, tax_brackets["federal"])
@@ -39,13 +43,13 @@ def calculate_swiss_tax(base, region, city):
         # calculate based on multipliers: 0.95 for cantonal and 1.19 for municipal
         base_cantonal_tax = taxes["cantonal"]
 
-        taxes["cantonal"] = base_cantonal_tax * 0.95
-        taxes["municipal"] = base_cantonal_tax * 1.19
+        taxes["cantonal"] = base_cantonal_tax * Decimal("0.95")
+        taxes["municipal"] = base_cantonal_tax * Decimal("1.19")
 
     return sum(taxes.values())
 
 def traverse_tax_brackets(base, tax_brackets):
-    total_tax = 0
+    total_tax = Decimal("0")
 
     for tax_bracket in tax_brackets:
         # extract data
