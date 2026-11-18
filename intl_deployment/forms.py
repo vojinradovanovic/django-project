@@ -57,8 +57,8 @@ class QueryForm(forms.Form):
     )
 
     class LivingStatus(models.TextChoices):    # local enum class
-        SOLE = "Single, no children"
-        COMMON = "Married/Single, with children"
+        SOLE = "Sole", "Single, no children"
+        COMMON = "Common", "Married/Single, with children"
 
     living_status = forms.ChoiceField(choices=LivingStatus.choices)
 
