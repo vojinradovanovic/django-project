@@ -1,4 +1,4 @@
-from django import forms
+from django import forms, models
 from .models import Country, Region
 
 ### FORMS ###
@@ -55,11 +55,11 @@ class QueryForm(forms.Form):
         queryset=Country.objects.all()
     )
 
-    class LivingStatus(forms.TextChoices):    # local enum class
+    class LivingStatus(models.TextChoices):    # local enum class
         SOLE = "Single, no children"
         COMMON = "Married/Single, with children"
 
-    living_status = forms.CharField(max_length=10, choices=LivingStatus.choices)
+    living_status = forms.ChoiceField(choices=LivingStatus.choices)
 
     years_of_work = forms.DecimalField(decimal_places=1)
 
