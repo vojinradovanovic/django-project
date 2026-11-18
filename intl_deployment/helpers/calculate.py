@@ -1,5 +1,16 @@
 from ..models import *
 
+
+
+def calculate_tax(base, country, region, city):
+    if country == CountryField("Switzerland"):
+        return calculate_swiss_tax(base, region, city)
+
+    elif country == CountryField("United Kingdom"):
+        return calculate_uk_tax(base, region)
+
+
+
 def calculate_swiss_tax(base, region, city):
     # initialisations: tax authorities, tax brackets, taxes
     tax_authorities = {

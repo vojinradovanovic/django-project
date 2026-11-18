@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import QueryForm
+from .helpers.data_handling import *
 
 ### VIEWS ###
 
@@ -15,73 +16,11 @@ def cost_estimate(request):
         form = QueryForm(request.POST)  # populate form
         
         if form.is_valid():
-            # unpack data from form.cleaned_data
+            # unpack data from QueryForm
+            input = extract_from_QueryForm(form)
 
-            # ------------ moving data ------------
-
-            home_country = form.cleaned_data["home_country"]
-            home_city = form.cleaned_data["home_city"]
-            home_region = home_city.region
-
-            host_country = form.cleaned_data["host_country"]
-            host_city = form.cleaned_data["host_city"]
-            host_region = host_city.region
-
-            start_date = form.cleaned_data["start_date"]
-            end_date = form.cleaned_data["end_date"]
-
-            # ------------ employee data ------------
-
-            citizenship = form.cleaned_data["citizenship"]
-            living_status = form.cleaned_data["living_status"]
-            years_of_work = form.cleaned_data["years_of_work"]
-
-            # ------------ employer data ------------
-
-            home_employer_country = form.cleaned_data["home_employer_country"]
-            host_employer_country = form.cleaned_data["host_employer_country"]
-            host_employer_payroll_country = form.cleaned_data["host_employer_payroll_country"]
-
-            # ------------ salary ------------
-
-            salary = form.cleaned_data["salary"]
-            bonus = form.cleaned_data["bonus"]
-
-            # ------------ benefits ------------
-
-            housing = form.cleaned_data["housing"]
-            relocation_allowance = form.cleaned_data["relocation_allowance"]
-            moving_costs = form.cleaned_data["moving_costs"]
-            temporary_housing = form.cleaned_data["temporary_housing"]
-
-            # ------------ other ------------
-
-            exchange_rate = form.cleaned_data["exchange_rate"]
-
-            # wrap data for output
-            home_pay = {
-                "salary": salary,
-                "bonus": bonus
-            }
-
-            assignment_benefits = {
-                "housing": housing,
-                "relocation_allowance": relocation_allowance,
-                "moving_costs": moving_costs,
-                "temporary_housing": temporary_housing
-            }
-
-            host_tax = {}
-
-            deductions = {}
-
-            # redefine data for output
-            data = {
-                "home_pay": home_pay,
-                "assignment_benefits": assignment_benefits,
-                "host_tax": host_tax,
-                "deductions": deductions
-            }
+            # generate data for output
+            data = generate_cost_estimate_data(input)
 
     # for any other request, create a blank form
     else:
