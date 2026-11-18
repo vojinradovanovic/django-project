@@ -11,20 +11,12 @@ class QueryForm(forms.Form):
         queryset=Country.objects.all()
     )
 
-    home_region = forms.ModelChoiceField(
-        queryset=Region.objects.all()
-    )
-
     home_city = forms.ModelChoiceField(
-        queryset=City.objects.all()
+        queryset=City.objects.none()
     )
 
     host_country = forms.ModelChoiceField(
         queryset=Country.objects.all()
-    )
-
-    host_region = forms.ModelChoiceField(
-        queryset=Region.objects.all()
     )
 
     host_city = forms.ModelChoiceField(

@@ -7,6 +7,9 @@ from .forms import QueryForm
 
 def cost_estimate(request):
 
+    # initialise local variables
+    data = None
+
     # if form has been filled out
     if request.method == "POST":
         form = QueryForm(request.POST)  # populate form
@@ -17,12 +20,12 @@ def cost_estimate(request):
             # ------------ moving data ------------
 
             home_country = form.cleaned_data["home_country"]
-            home_region = form.cleaned_data["home_region"]
             home_city = form.cleaned_data["home_city"]
+            home_region = home_city.region
 
             host_country = form.cleaned_data["host_country"]
-            host_region = form.cleaned_data["host_region"]
             host_city = form.cleaned_data["host_city"]
+            host_region = host_city.region
 
             start_date = form.cleaned_data["start_date"]
             end_date = form.cleaned_data["end_date"]
