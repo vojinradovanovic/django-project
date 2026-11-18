@@ -6,11 +6,50 @@
 
 {% if data %}
     <table>
+        <!-- Output table is split into four parts: home pay, assignment benefits, host tax, deductions -->
+
+        <!-- Part 1 -->
         <tr>
             <th>HOME PAY</th>
         </tr>
 
         {% for field, value in data.home_pay.items %}
+            <tr>
+                <td>{{ field }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+
+        <!-- Part 2 -->
+        <tr>
+            <th>ASSIGNMENT BENEFITS</th>
+        </tr>
+
+        {% for field, value in data.assignment_benefits.items %}
+            <tr>
+                <td>{{ field }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+
+        <!-- Part 3 -->
+        <tr>
+            <th>HOST TAX</th>
+        </tr>
+
+        {% for field, value in data.host_tax.items %}
+            <tr>
+                <td>{{ field }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+
+        <!-- Part 4 -->
+        <tr>
+            <th>DEDUCTIONS</th>
+        </tr>
+
+        {% for field, value in data.deductions.items %}
             <tr>
                 <td>{{ field }}</td>
                 <td>{{ value }}</td>

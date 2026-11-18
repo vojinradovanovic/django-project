@@ -55,15 +55,29 @@ def cost_estimate(request):
 
             exchange_rate = form.cleaned_data["exchange_rate"]
 
-            # wrap home pay data
+            # wrap data for output
             home_pay = {
                 "salary": salary,
                 "bonus": bonus
             }
 
+            assignment_benefits = {
+                "housing": housing,
+                "relocation_allowance": relocation_allowance,
+                "moving_costs": moving_costs,
+                "temporary_housing": temporary_housing
+            }
+
+            host_tax = {}
+
+            deductions = {}
+
             # redefine data for output
             data = {
-                "home_pay": home_pay
+                "home_pay": home_pay,
+                "assignment_benefits": assignment_benefits,
+                "host_tax": host_tax,
+                "deductions": deductions
             }
 
     # for any other request, create a blank form
