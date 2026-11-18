@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from .models import Country, Region
 
@@ -80,9 +81,7 @@ class QueryForm(forms.Form):
 
     # ------------ salary ------------
 
-    salary = forms.DecimalField(label="Annual salary",
-        min_value=0
-    )
+    salary = forms.DecimalField(label="Annual salary", min_value=0)
 
     bonus = forms.DecimalField(label="Annual bonus", min_value=0, required=False)
 
@@ -99,3 +98,60 @@ class QueryForm(forms.Form):
     # ------------ other ------------
 
     exchange_rate = forms.DecimalField()
+
+
+
+    # ------------ cleaning functions ------------
+
+    def clean_home_country(self):
+        home_country = self.cleaned_data["home_country"]
+
+        if home_country.country.name != "Switzerland":
+            raise ValidationError("Only Switzerland is supported here!", code="unsupported")
+
+        return home_country
+
+    def clean_citizenship(self):
+        citizenship = self.cleaned_data["citizenship"]
+
+        if citizenship.country.name != "Switzerland":
+            raise ValidationError("Only Switzerland is supported here!", code="unsupported")
+
+        return citizenship
+
+    def clean_living_status(self):
+        living_status = self.cleaned_data["living_status"]
+
+        if living_status != self.LivingStatus.SOLE:
+            raise ValidationError("Only \"%(single)s\" is supported here!", code="unsupported",
+                                    params = {"single": self.LivingStatus.SOLE.label})
+
+        return living_status
+
+    def clean_exchange_rate(self):
+        exchange_rate = self.cleaned_data["exchange_rate"]
+
+        if exchange_rate <= 0:
+            raise ValidationError("Exchange rate must be positive!", code="invalid")
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # get needed fields
+        home_country = cleaned_data["home_country"]
+        host_country = cleaned_data["host_country"]
+
+        start_date = cleaned_data["start_date"]
+        end_date = cleaned_data["end_date"]
+
+        # compare dates
+        if start_date >= end_date:
+            self.add_error("start_date",
+                            ValidationError("Start date must be before the end date!", code="invalid"))
+
+        # compare countries
+        if home_country == host_country:
+            self.add_error("host_country",
+                            ValidationError("Home country and host country must be different!", code="invalid"))
+
+        return cleaned_data
