@@ -32,6 +32,14 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+class City(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    tax_authority = models.ForeignKey(TaxAuthority, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
 class TaxBracket(models.Model):
     tax_authority = models.ForeignKey(TaxAuthority, on_delete=models.CASCADE)
     tax_rate = models.DecimalField(max_digits = 4, decimal_places = 2)  # tax percentage, from 00.00 to 99.99,

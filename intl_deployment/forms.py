@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
-from .models import Country, Region
+from .models import Country, Region, City
 
 ### FORMS ###
 class QueryForm(forms.Form):
@@ -15,7 +15,9 @@ class QueryForm(forms.Form):
         queryset=Region.objects.all()
     )
 
-    home_city = forms.CharField(max_length=200)
+    home_city = forms.ModelChoiceField(
+        queryset=City.objects.all()
+    )
 
     host_country = forms.ModelChoiceField(
         queryset=Country.objects.all()
@@ -25,7 +27,9 @@ class QueryForm(forms.Form):
         queryset=Region.objects.all()
     )
 
-    host_city = forms.CharField(max_length=200)
+    host_city = forms.ModelChoiceField(
+        queryset=City.objects.all()
+    )
 
     start_date = forms.DateField(
         input_formats=['%Y-%m-%d'],
