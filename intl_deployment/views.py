@@ -61,7 +61,7 @@ def cost_estimate(request):
     else:
         form = QueryForm()
 
-    return render(request, "cost_estimate.html", {"form": form})
+    return render(request, "intl_deployment/cost_estimate.html", {"form": form})
 
 def immigration(request):
     return HttpResponse("Immigration goes here.")
