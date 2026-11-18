@@ -53,7 +53,32 @@ def traverse_tax_brackets(base, tax_brackets):
 
 
 def calculate_uk_tax(base, region):
-    # initialisations: tax authorities, tax brackets
+    # initialisations: tax authorities, tax brackets, taxes
     tax_authority = Region.objects.filter(region=region).tax_authority
 
-    tax_brackets = TaxBracket.objects.filter(tax_authority=tax_authority)
+    tax_brackets = TaxBracket.objects.filter(tax_authority=tax_authority) \
+                    .order_by("-min_salary_threshold")
+
+    previous_tax = 0
+    final_tax = 0
+
+    # initialisations: other
+    max_untaxable_income = 12570
+    lowering_threshold = pow(10, 5)
+
+    # tax loop
+    while True:
+        # synchronise
+        previous_tax = final_tax
+
+        # calculate tax
+        # initial
+        final_tax = traverse_tax_brackets(base, tax_brackets)
+
+        # lower untaxed portion if needed
+        final_tax += min(max_untaxable_income, (base-lowering_threshold)/2)
+
+        if abs(final_tax-previous_tax)<1:
+            break
+
+    return final_tax
