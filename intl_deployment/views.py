@@ -55,13 +55,22 @@ def cost_estimate(request):
 
             exchange_rate = form.cleaned_data["exchange_rate"]
 
-            return HttpResponseRedirect("/Input completed/")
+            # wrap home pay data
+            home_pay = {
+                "salary": salary,
+                "bonus": bonus
+            }
+
+            # redefine data for output
+            data = {
+                "home_pay": home_pay
+            }
 
     # for any other request, create a blank form
     else:
         form = QueryForm()
 
-    return render(request, "intl_deployment/cost_estimate.html", {"form": form})
+    return render(request, "intl_deployment/cost_estimate.html", {"form": form, "data": data})
 
 def immigration(request):
     return HttpResponse("Immigration goes here.")
