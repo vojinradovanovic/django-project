@@ -18,7 +18,8 @@ def determine_ss_residency(home_country, host_country, start_date, end_date):
             months = date_difference.months
             days = date_difference.days
 
-            if years<2 or (years==2 and months==0 and days==0):
+            # 2 years, 0 months, 0 days is produced between the same dates of 2 different years
+            if years<2:
                 return home_country
 
             else:

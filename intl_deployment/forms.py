@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from .models import Country, Region, City
 
+from dateutil.relativedelta import relativedelta
+
 ### FORMS ###
 class QueryForm(forms.Form):
     # ------------ moving data ------------
@@ -146,6 +148,12 @@ class QueryForm(forms.Form):
         if start_date >= end_date:
             self.add_error("start_date",
                             ValidationError("Start date must be before the end date!", code="invalid"))
+
+        # only relative difference between dates of <= 2 years is supported
+        date_difference = relativedelta(end_date, start_date)
+        if not(date_difference.years < 2):
+            self.add_error("end_date",
+                            ValidationError("Only periods no longer than 2 years are supported!", code="unsupported"))
 
         # compare countries
         if home_country == host_country:
