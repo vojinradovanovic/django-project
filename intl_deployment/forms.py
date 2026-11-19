@@ -85,13 +85,13 @@ class QueryForm(forms.Form):
 
     # ------------ benefits ------------
 
-    housing = forms.DecimalField()
+    housing = forms.DecimalField(label="Housing pcm (host country currency)")
 
-    relocation_allowance = forms.DecimalField()
+    relocation_allowance = forms.DecimalField(label="Relocation allowance, 1st year (HOME country currency)")
 
-    moving_costs = forms.DecimalField()
+    moving_costs = forms.DecimalField(label="Moving costs, 1st year (host country currency)")
 
-    temporary_housing = forms.DecimalField()
+    temporary_housing = forms.DecimalField(label="Temporary housing, 1st year (host country currency)")
 
     # ------------ other ------------
 
