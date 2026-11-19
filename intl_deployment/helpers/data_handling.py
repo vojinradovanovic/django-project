@@ -71,7 +71,7 @@ def generate_cost_estimate_data(input):
 
     deductions = {
         "home_income_tax": calculate_tax(home_base_pay, input["home_country"], input["home_region"], input["home_city"]),
-        "home_social_security": calculate_social_security(home_base_pay, input["home_country"])
+        "home_social_security": calculate_social_security(home_base_pay, input["home_country"], ss_residency_country)
     }
 
     # calculate taxable pay in host country
@@ -79,7 +79,7 @@ def generate_cost_estimate_data(input):
 
     host_tax = {
         "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"]),
-        "host_social_security": calculate_social_security(home_base_pay, input["host_country"])
+        "host_social_security": calculate_social_security(home_base_pay, input["host_country"], ss_residency_country)
     }
 
     # other useful information
