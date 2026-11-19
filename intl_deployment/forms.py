@@ -141,8 +141,20 @@ class QueryForm(forms.Form):
         home_country = cleaned_data["home_country"]
         host_country = cleaned_data["host_country"]
 
+        home_city = cleaned_data["home_city"]
+        host_city = cleaned_data["host_city"]
+
         start_date = cleaned_data["start_date"]
         end_date = cleaned_data["end_date"]
+
+        # match cities to countries
+        if home_city.region.country != home_country:
+            self.add_error("home_city",
+                            ValidationError("Home city must be within home country!", code="invalid"))
+
+        if host_city.region.country != host_country:
+            self.add_error("host_city",
+                            ValidationError("Host city must be within host country!", code="invalid"))
 
         # compare dates
         if start_date >= end_date:
