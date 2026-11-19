@@ -2,6 +2,8 @@ from ..forms import QueryForm
 from .calculate import calculate_tax, calculate_social_security
 from .helpers import determine_ss_residency
 
+from decimal import Decimal
+
 def extract_from_QueryForm(query_form):
     input = {
         # ------------ moving data ------------
@@ -77,9 +79,25 @@ def generate_cost_estimate_data(input):
     # calculate taxable pay in host country
     host_base_pay = (home_base_pay - sum(deductions.values())) / input["exchange_rate"]
 
+    # calculate taxable relocation allowance
+    taxable_relocation = max(Decimal("0"), assignment_benefits["moving_costs"] \
+                                            + assignment_benefits["temporary_housing"] \
+                                            - Decimal("8000"))
+
+    # add benefits
+    host_base_pay += Decimal("12") * assignment_benefits["housing"] # housing is pcm
+    host_first_year_extra = assignment_benefits["relocation_allowance"] / input["exchange_rate"] \
+                            + taxable_relocation
+
+    host_income_tax = calculate_tax(host_base_pay,
+                                         input["host_country"], input["host_region"], input["host_city"])
+    host_income_tax_first_year = calculate_tax(host_base_pay + host_first_year_extra,
+                                         input["host_country"], input["host_region"], input["host_city"])
+
     host_tax = {
-        "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"]),
-        "host_social_security": calculate_social_security(home_base_pay, input["host_country"], ss_residency_country)
+        "host_income_tax": host_income_tax,
+        "host_social_security": calculate_social_security(home_base_pay, input["host_country"], ss_residency_country),
+        "first_year_income_tax": host_income_tax_first_year - host_income_tax
     }
 
     # other useful information
