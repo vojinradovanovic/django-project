@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from ..models import *
 
 
@@ -45,6 +45,11 @@ def calculate_swiss_tax(base, region, city):
 
         taxes["cantonal"] = base_cantonal_tax * Decimal("0.95")
         taxes["municipal"] = base_cantonal_tax * Decimal("1.19")
+
+    # round all taxes before outputting;
+    # all taxes in the tax calculator are expressed as round numbers
+    for key in taxes.keys():
+        taxes[key] = taxes[key].quantize(Decimal("0"), rounding=ROUND_HALF_UP)
 
     return sum(taxes.values())
 
