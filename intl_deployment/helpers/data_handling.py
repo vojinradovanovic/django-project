@@ -69,7 +69,7 @@ def generate_cost_estimate_data(input):
     }
 
     # calculate taxable pay in host country
-    host_base_pay = home_base_pay - sum(deductions.values())
+    host_base_pay = (home_base_pay - sum(deductions.values())) / input["exchange_rate"]
 
     host_tax = {
         "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"])
