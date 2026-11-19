@@ -75,12 +75,19 @@ def generate_cost_estimate_data(input):
         "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"])
     }
 
+    # other useful information
+    other = {
+        "home_country": input["home_country"],
+        "host_country": input["host_country"]
+    }
+
     # redefine data for output
     data = {
         "home_pay": home_pay,
         "assignment_benefits": assignment_benefits,
         "host_tax": host_tax,
-        "deductions": deductions
+        "deductions": deductions,
+        "other": other
     }
     
     return data

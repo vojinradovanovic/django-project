@@ -1,3 +1,6 @@
+<!-- Load apps -->
+{% load humanize %}
+
 <form action="{% url 'intl_deployment:cost_estimate' %}" method="post">
     {% csrf_token %}
     {{ form }}
@@ -16,7 +19,8 @@
         {% for field, value in data.home_pay.items %}
             <tr>
                 <td>{{ field }}</td>
-                <td>{{ value }}</td>
+                <td>{{ value|intcomma }}</td>
+                <td>{{ data.other.home_country.currency }}</td>
             </tr>
         {% endfor %}
 
@@ -28,7 +32,7 @@
         {% for field, value in data.assignment_benefits.items %}
             <tr>
                 <td>{{ field }}</td>
-                <td>{{ value }}</td>
+                <td>{{ value|intcomma }}</td>
             </tr>
         {% endfor %}
 
@@ -40,7 +44,8 @@
         {% for field, value in data.host_tax.items %}
             <tr>
                 <td>{{ field }}</td>
-                <td>{{ value }}</td>
+                <td>{{ value|intcomma }}</td>
+                <td>{{ data.other.host_country.currency }}</td>
             </tr>
         {% endfor %}
 
@@ -52,7 +57,8 @@
         {% for field, value in data.deductions.items %}
             <tr>
                 <td>{{ field }}</td>
-                <td>{{ value }}</td>
+                <td>{{ value|intcomma }}</td>
+                <td>{{ data.other.home_country.currency }}</td>
             </tr>
         {% endfor %}
     </table>
