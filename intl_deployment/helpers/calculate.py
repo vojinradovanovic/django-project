@@ -1,5 +1,6 @@
 from decimal import Decimal, ROUND_HALF_UP
 from ..models import *
+from .helpers import rate_to_multiplyer
 
 ### INCOME TAXES
 
@@ -67,11 +68,6 @@ def traverse_tax_brackets(base, tax_brackets):
 
     return total_tax
 
-def rate_to_multiplyer(tax_rate: models.DecimalField):
-    """Converts tax rates, given as %, to a multiplyer"""
-
-    return tax_rate / Decimal("100")
-
 
 def calculate_uk_tax(base, region):
     # initialisations: tax authorities, tax brackets, taxes
@@ -108,16 +104,21 @@ def calculate_uk_tax(base, region):
 
 ### SOCIAL SECURITY TAXES ###
 
-def calculate_social_security(base, country):
-    # initialisations
-    social_security_taxes = SocialSecurityTax.objects.filter(country=country)
-    total_tax = Decimal("0")
+def calculate_social_security(base, country, ss_residency_country):
+    if country == ss_residency_country:
+        # initialisations
+        social_security_taxes = SocialSecurityTax.objects.filter(country=country)
+        total_tax = Decimal("0")
 
-    for ss_tax in social_security_taxes:
-        # if max taxable income is given, adjust base
-        adjusted_base = base if ss_tax.max_taxable_income is None else max(ss_tax.max_taxable_income, base)
+        for ss_tax in social_security_taxes:
+            # if max taxable income is given, adjust base
+            adjusted_base = base if ss_tax.max_taxable_income is None else max(ss_tax.max_taxable_income, base)
 
-        # add to total tax
-        total_tax += adjusted_base * rate_to_multiplyer(ss_tax.tax_rate)
+            # add to total tax
+            total_tax += adjusted_base * rate_to_multiplyer(ss_tax.tax_rate)
 
-    return total_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)
+        return total_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)
+
+    # if the calculation country is not the country of social security residency, return 0
+    else:
+        return Decimal("0")

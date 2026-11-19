@@ -1,5 +1,6 @@
 from ..forms import QueryForm
 from .calculate import calculate_tax, calculate_social_security
+from .helpers import determine_ss_residency
 
 def extract_from_QueryForm(query_form):
     input = {
@@ -62,7 +63,11 @@ def generate_cost_estimate_data(input):
     }
 
     # calculate base pay
-    home_base_pay = sum(home_pay.values())       #TODO: taxable in Switzerland, UK, etc
+    home_base_pay = sum(home_pay.values())
+
+    # establish social security residency
+    ss_residency_country = determine_ss_residency(input["home_country"], input["host_country"],
+                                                    input["start_date"], input["end_date"])
 
     deductions = {
         "home_income_tax": calculate_tax(home_base_pay, input["home_country"], input["home_region"], input["home_city"]),
@@ -73,7 +78,8 @@ def generate_cost_estimate_data(input):
     host_base_pay = (home_base_pay - sum(deductions.values())) / input["exchange_rate"]
 
     host_tax = {
-        "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"])
+        "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"]),
+        "host_social_security": calculate_social_security(home_base_pay, input["host_country"])
     }
 
     # other useful information
