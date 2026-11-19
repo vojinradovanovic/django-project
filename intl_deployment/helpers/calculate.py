@@ -29,9 +29,6 @@ def calculate_swiss_tax(base, region, city):
         key: 0. for key in tax_authorities.keys()
     }
 
-    print("Hello")
-    print(tax_authorities)
-
     # calculate federal tax
     taxes["federal"] = traverse_tax_brackets(base, tax_brackets["federal"])
 
@@ -123,4 +120,4 @@ def calculate_social_security(base, country):
         # add to total tax
         total_tax += adjusted_base * rate_to_multiplyer(ss_tax.tax_rate)
 
-    return total_tax
+    return total_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)

@@ -12,7 +12,7 @@ class QueryForm(forms.Form):
     )
 
     home_city = forms.ModelChoiceField(
-        queryset=City.objects.none()
+        queryset=City.objects.all()
     )
 
     host_country = forms.ModelChoiceField(
@@ -129,6 +129,8 @@ class QueryForm(forms.Form):
 
         if exchange_rate <= 0:
             raise ValidationError("Exchange rate must be positive!", code="invalid")
+
+        return exchange_rate
 
     def clean(self):
         cleaned_data = super().clean()
