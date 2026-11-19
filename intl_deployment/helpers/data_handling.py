@@ -1,5 +1,5 @@
 from ..forms import QueryForm
-from .calculate import calculate_tax
+from .calculate import calculate_tax, calculate_social_security
 
 def extract_from_QueryForm(query_form):
     input = {
@@ -65,7 +65,8 @@ def generate_cost_estimate_data(input):
     home_base_pay = sum(home_pay.values())       #TODO: taxable in Switzerland, UK, etc
 
     deductions = {
-        "home_income_tax": calculate_tax(home_base_pay, input["home_country"], input["home_region"], input["home_city"])
+        "home_income_tax": calculate_tax(home_base_pay, input["home_country"], input["home_region"], input["home_city"]),
+        "home_social_security": calculate_social_security(home_base_pay, input["home_country"])
     }
 
     # calculate taxable pay in host country

@@ -9,7 +9,8 @@ class SocialSecurityTax(models.Model):
     tax_rate = models.DecimalField(max_digits = 4, decimal_places = 2)  # tax percentage, from 00.00 to 99.99,
                                                                         # two decimal places
 
-    max_taxable_income = models.PositiveIntegerField()  # this is the maximum income which is taxable, e.g. Swiss unemployment
+    max_taxable_income = models.PositiveIntegerField(null=True, blank=True) # this is the maximum income which is taxable,
+                                                                            # e.g. Swiss unemployment
 
     description = models.CharField(max_length=100)
 
