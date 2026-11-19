@@ -62,14 +62,17 @@ def generate_cost_estimate_data(input):
     }
 
     # calculate base pay
-    base_pay = sum(home_pay.values())       #TODO: taxable in Switzerland, UK, etc
+    home_base_pay = sum(home_pay.values())       #TODO: taxable in Switzerland, UK, etc
 
     deductions = {
-        "home_income_tax": calculate_tax(base_pay, input["home_country"], input["home_region"], input["home_city"])
+        "home_income_tax": calculate_tax(home_base_pay, input["home_country"], input["home_region"], input["home_city"])
     }
 
+    # calculate taxable pay in host country
+    host_base_pay = home_base_pay - sum(deductions.values())
+
     host_tax = {
-        "host_income_tax": calculate_tax(base_pay, input["host_country"], input["host_region"], input["host_city"])
+        "host_income_tax": calculate_tax(host_base_pay, input["host_country"], input["host_region"], input["host_city"])
     }
 
     # redefine data for output

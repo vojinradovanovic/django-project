@@ -103,4 +103,4 @@ def calculate_uk_tax(base, region):
         if abs(final_tax-previous_tax)<1:
             break
 
-    return final_tax
+    return final_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)
