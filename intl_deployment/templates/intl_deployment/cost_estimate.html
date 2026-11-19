@@ -33,6 +33,23 @@
             <tr>
                 <td>{{ field }}</td>
                 <td>{{ value|intcomma }}</td>
+
+                <!-- Currency -->
+                {% if field == "relocation_allowance" %}
+                    <td>{{ data.other.host_country.currency }}</td>
+                {% else %}
+                    <td>{{ data.other.home_country.currency }}</td>
+                {% endif %}
+
+                <!-- Type of tax -->
+                 {% if field == "housing" %}
+                    <td>Taxable in kind</td>
+                {% elif field == "relocation_allowance" %}
+                    <td>Taxable cash</td>
+                {% else %}
+                    <td>Taxable if total over 8k GBP (UK)</td>
+                {% endif %}
+    
             </tr>
         {% endfor %}
 
