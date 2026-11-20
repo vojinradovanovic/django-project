@@ -10,6 +10,7 @@ def cost_estimate(request):
 
     # initialise local variables
     data = None
+    saved_data = request.session.get("cost_estimate_form_data")
 
     # if form has been filled out
     if request.method == "POST":
@@ -21,6 +22,13 @@ def cost_estimate(request):
 
             # generate data for output
             data = generate_cost_estimate_data(input)
+
+            # store the data in session
+            request.session["cost_estimate_form_data"] = request.POST.dict()
+
+    # if there is saved data from the previous session, retrieve it
+    elif saved_data:
+        form = QueryForm(saved_data)
 
     # for any other request, create a blank form
     else:
