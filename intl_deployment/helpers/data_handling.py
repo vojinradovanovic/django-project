@@ -64,16 +64,30 @@ def generate_cost_estimate_data(input):
         "temporary_housing": input["temporary_housing"]
     }
 
+    # create dictionary for aggregating sources
+    sources = {
+        "ss_residency": set(),
+        "home_income_tax": set(),
+        "home_social_security": set(),
+        "home_income_tax": set(),
+        "home_income_tax_first_year": set()
+    }
     # calculate base pay
     home_base_pay = sum(home_pay.values())
 
-    # establish social security residency
-    ss_residency_country = determine_ss_residency(input["home_country"], input["host_country"],
-                                                    input["start_date"], input["end_date"])
+    # establish social security residency and tax
+    ss_residency_country, sources["ss_residency"] = determine_ss_residency(input["home_country"], input["host_country"],
+                                                        input["start_date"], input["end_date"])
+
+    home_income_tax, sources["home_income_tax"] = calculate_tax(home_base_pay, input["home_country"],
+                                                                input["home_region"], input["home_city"])
+
+    home_social_security, sources["home_social_security"] = calculate_social_security(home_base_pay,
+                                                                                    input["home_country"], ss_residency_country)
 
     deductions = {
-        "home_income_tax": calculate_tax(home_base_pay, input["home_country"], input["home_region"], input["home_city"]),
-        "home_social_security": calculate_social_security(home_base_pay, input["home_country"], ss_residency_country)
+        "home_income_tax": home_income_tax,
+        "home_social_security": home_social_security
     }
 
     # calculate taxable pay in host country
@@ -89,21 +103,28 @@ def generate_cost_estimate_data(input):
     host_first_year_extra = assignment_benefits["relocation_allowance"] / input["exchange_rate"] \
                             + taxable_relocation
 
-    host_income_tax = calculate_tax(host_base_pay,
-                                         input["host_country"], input["host_region"], input["host_city"])
-    host_income_tax_first_year = calculate_tax(host_base_pay + host_first_year_extra,
-                                         input["host_country"], input["host_region"], input["host_city"])
+    host_income_tax, sources["host_income_tax"] = \
+            calculate_tax(host_base_pay,
+                            input["host_country"], input["host_region"], input["host_city"])
+
+    host_income_tax_first_year, sources["host_income_tax_first_year"] = \
+            calculate_tax(host_base_pay + host_first_year_extra,
+                        input["host_country"], input["host_region"], input["host_city"])
+
+    host_social_security, sources["host_social_security"] = calculate_social_security(home_base_pay,
+                                                                                      input["host_country"], ss_residency_country)
 
     host_tax = {
         "host_income_tax": host_income_tax,
-        "host_social_security": calculate_social_security(home_base_pay, input["host_country"], ss_residency_country),
+        "host_social_security": host_social_security,
         "first_year_income_tax": host_income_tax_first_year - host_income_tax
     }
 
     # other useful information
     other = {
         "home_country": input["home_country"],
-        "host_country": input["host_country"]
+        "host_country": input["host_country"],
+        "sources": set().union(*sources.values())
     }
 
     # redefine data for output

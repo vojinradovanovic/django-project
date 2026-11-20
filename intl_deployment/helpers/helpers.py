@@ -11,6 +11,9 @@ def rate_to_multiplyer(tax_rate: models.DecimalField):
 def determine_ss_residency(home_country, host_country, start_date, end_date):
     if host_country.country.name == "United Kingdom":
         if home_country.country.name == "Switzerland":
+            # set rule for swiss employees coming to the UK
+            sources = set("https://www.gov.uk/guidance/social-security-contributions-for-workers-coming-to-the-uk-from-the-eea-or-switzerland")
+
             # calculate the number of years
             date_difference = relativedelta(end_date, start_date)
 
@@ -20,7 +23,7 @@ def determine_ss_residency(home_country, host_country, start_date, end_date):
 
             # 2 years, 0 months, 0 days is produced between the same dates of 2 different years
             if years<2:
-                return home_country
+                return home_country, sources
 
             else:
-                return host_country
+                return host_country, sources

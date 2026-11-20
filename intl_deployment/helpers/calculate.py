@@ -14,7 +14,7 @@ def calculate_tax(base, country, region, city):
 
 
 def calculate_swiss_tax(base, region, city):
-    # initialisations: tax authorities, tax brackets, taxes
+    # initialisations: tax authorities, tax brackets, taxes, sources
     tax_authorities = {
         "federal": Country.objects.get(country="CH").tax_authority,
         "cantonal": region.tax_authority,
@@ -29,12 +29,15 @@ def calculate_swiss_tax(base, region, city):
     taxes = {
         key: 0. for key in tax_authorities.keys()
     }
+    sources = {
+        key: set() for key in tax_authorities.keys()
+    }
 
     # calculate federal tax
-    taxes["federal"] = traverse_tax_brackets(base, tax_brackets["federal"])
+    taxes["federal"], sources["federal"] = traverse_tax_brackets(base, tax_brackets["federal"])
 
     # calculate cantonal tax
-    taxes["cantonal"] = traverse_tax_brackets(base, tax_brackets["cantonal"])
+    taxes["cantonal"], sources["cantonal"] = traverse_tax_brackets(base, tax_brackets["cantonal"])
 
     # calculate municipal tax in the case of Zurich
     if city.name == "City of Zurich":
@@ -44,15 +47,21 @@ def calculate_swiss_tax(base, region, city):
         taxes["cantonal"] = base_cantonal_tax * Decimal("0.95")
         taxes["municipal"] = base_cantonal_tax * Decimal("1.19")
 
+        # add source to the city of zurich tax calculation
+        sources["municipal"] = set("https://swisstaxcalculator.estv.admin.ch/#/taxdata/tax-rates")
+
     # round all taxes before outputting;
     # all taxes in the tax calculator are expressed as round numbers
     for key in taxes.keys():
         taxes[key] = taxes[key].quantize(Decimal("0"), rounding=ROUND_HALF_UP)
 
-    return sum(taxes.values())
+    return sum(taxes.values()), set().union(*sources.values())
 
 def traverse_tax_brackets(base, tax_brackets):
     total_tax = Decimal("0")
+
+    # collect sources
+    sources = set()
 
     for tax_bracket in tax_brackets:
         # extract data
@@ -66,11 +75,14 @@ def traverse_tax_brackets(base, tax_brackets):
             # lower base for next tax bracket
             base = threshold
 
-    return total_tax
+        # collect source
+        sources.add(tax_bracket.source)
+
+    return total_tax, sources
 
 
 def calculate_uk_tax(base, region):
-    # initialisations: tax authorities, tax brackets, taxes
+    # initialisations: tax authorities, tax brackets, taxes, sources
     tax_authority = region.tax_authority
 
     tax_brackets = TaxBracket.objects.filter(tax_authority=tax_authority) \
@@ -78,6 +90,7 @@ def calculate_uk_tax(base, region):
 
     previous_tax = Decimal("0")
     final_tax = Decimal("0")
+    sources = set()
 
     # initialisations: other
     max_untaxable_income = Decimal("0")
@@ -91,7 +104,7 @@ def calculate_uk_tax(base, region):
 
         # calculate tax
         # initial
-        final_tax = traverse_tax_brackets(base, tax_brackets)
+        final_tax, sources = traverse_tax_brackets(base, tax_brackets)
 
         # lower untaxed portion if needed
         if base > lowering_threshold:
@@ -100,7 +113,7 @@ def calculate_uk_tax(base, region):
         if abs(final_tax-previous_tax)<1:
             break
 
-    return final_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)
+    return final_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP), sources
 
 ### SOCIAL SECURITY TAXES ###
 
@@ -109,6 +122,7 @@ def calculate_social_security(base, country, ss_residency_country):
         # initialisations
         social_security_taxes = SocialSecurityTax.objects.filter(country=country)
         total_tax = Decimal("0")
+        sources = set()
 
         for ss_tax in social_security_taxes:
             # if max taxable income is given, adjust base
@@ -117,8 +131,11 @@ def calculate_social_security(base, country, ss_residency_country):
             # add to total tax
             total_tax += adjusted_base * rate_to_multiplyer(ss_tax.tax_rate)
 
-        return total_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)
+            # add source
+            sources.add(ss_tax.source)
+
+        return total_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP), sources
 
     # if the calculation country is not the country of social security residency, return 0
     else:
-        return Decimal("0")
+        return Decimal("0"), set()

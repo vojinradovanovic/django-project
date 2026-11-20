@@ -79,4 +79,17 @@
             </tr>
         {% endfor %}
     </table>
+
+    <!-- Sources -->
+    <h2>Sources</h2>
+
+    <ul>
+        {% for source in data.sources %}
+            <li>
+                <a href="{{ source }}" target="_blank">
+                    {{ source }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endif %}
