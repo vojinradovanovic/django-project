@@ -95,7 +95,7 @@ class QueryForm(forms.Form):
 
     # ------------ other ------------
 
-    exchange_rate = forms.DecimalField()
+    exchange_rate = forms.DecimalField(label="Exchange rate (in terms of home currency)")
 
 
 

@@ -2,7 +2,10 @@ from ..forms import QueryForm
 from .calculate import calculate_tax, calculate_social_security
 from .helpers import determine_ss_residency
 
-from decimal import Decimal
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+
+from decimal import Decimal, ROUND_HALF_UP
 
 def extract_from_QueryForm(query_form):
     input = {
@@ -122,11 +125,52 @@ def generate_cost_estimate_data(input):
         "first_year_income_tax": host_income_tax_first_year - host_income_tax
     }
 
+    # calculate taxes for the final figure
+    total_taxable_period = relativedelta(input["end_date"], input["start_date"])
+    total_tax = 0
+
+    if total_taxable_period.years < 1:      # 1 year 0 months 0 days is included in this, adjustments are made with timedelta
+        total_taxable_period = relativedelta(input["end_date"] + timedelta(days=1), input["start_date"])
+        scaling = total_taxable_period.years \
+                    + total_taxable_period.months / 12 \
+                    + total_taxable_period.days / 360
+        total_tax +=  Decimal(f"{scaling}") * host_income_tax_first_year
+
+    else:
+        total_tax += host_income_tax_first_year
+
+        total_taxable_period = relativedelta(input["end_date"] + timedelta(days=1), input["start_date"])
+        scaling = total_taxable_period.years - 1 \
+                    + total_taxable_period.months / 12 \
+                    + total_taxable_period.days / 360
+
+        total_tax += Decimal(f"{scaling}") * host_income_tax
+
+    # round tax
+    total_tax = total_tax.quantize(Decimal("0"), rounding=ROUND_HALF_UP)
+
+    # set aggregate tax data
+    aggregate_tax_data = {
+        "total_host_tax": total_tax,
+        "as_percentage_of_host_base": (total_tax / host_base_pay * Decimal("100")).
+                                        quantize(Decimal("0"), rounding=ROUND_HALF_UP)
+    }
+
+    print(aggregate_tax_data)
+
+
+    # set assumptions
+    assumptions = ["Stable exchange rate for the entire assignment period",
+                   "2026 tax rates for the entire assignment period",
+                   "Total income taxes scaled based on the duration of the assignment",
+                   "Rounding is performed half up"]
+
     # other useful information
     other = {
         "home_country": input["home_country"],
         "host_country": input["host_country"],
-        "sources": set().union(*sources.values())
+        "sources": set().union(*sources.values()),
+        "assumptions": assumptions
     }
 
     # redefine data for output
@@ -135,6 +179,7 @@ def generate_cost_estimate_data(input):
         "assignment_benefits": assignment_benefits,
         "host_tax": host_tax,
         "deductions": deductions,
+        "aggregate_tax_data": aggregate_tax_data,
         "other": other
     }
     

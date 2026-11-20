@@ -80,6 +80,32 @@
         {% endfor %}
     </table>
 
+    <br />
+
+    <table>
+        <!-- Total tax -->
+        <tr>
+            <th>TOTAL TAX</th>
+        </tr>
+
+        <tr>
+            <td>{{ data.aggregate_tax_data.total_host_tax|intcomma }}</td>
+            <td>{{ data.other.host_country.currency }}</td>
+            <td>({{ data.aggregate_tax_data.as_percentage_of_host_base }}% of annual income with benefits)</td>
+        </tr>
+    </table>
+
+    <!-- Assumptions -->
+    <h2>Assumptions</h2>
+
+    <ul>
+        {% for assumption in data.other.assumptions %}
+            <li>
+                {{ assumption }}
+            </li>
+        {% endfor %}
+    </ul>
+
     <!-- Sources -->
     <h2>Sources</h2>
 
