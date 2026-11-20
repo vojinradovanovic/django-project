@@ -156,7 +156,6 @@ def generate_cost_estimate_data(input):
                                         quantize(Decimal("0"), rounding=ROUND_HALF_UP)
     }
 
-    print(aggregate_tax_data)
 
 
     # set assumptions
