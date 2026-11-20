@@ -234,8 +234,8 @@ def generate_immigration_data(input):
     data["employer_requirements"].append({
         "description": 'Certificate of coverage\n(Swiss social security authority);',
         "comments": 'Not obliged to pay UK social security contributions if\n' + \
-                    'the assignment period is 2 years at most\n\n' + \
-                    'the social security authority is determined by place of residence',
+                    'the assignment period is 2 years at most;\n' + \
+                    'the relevant authority is determined by place of residence',
         "source": "https://www.gov.uk/guidance/social-security-contributions-for-workers-coming-to-the-uk-from-the-eea-or-switzerland"
     })
 
