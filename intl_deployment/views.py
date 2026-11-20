@@ -29,4 +29,4 @@ def cost_estimate(request):
     return render(request, "intl_deployment/cost_estimate.html", {"form": form, "data": data})
 
 def immigration(request):
-    return HttpResponse("Immigration goes here.")
+    return render(request, "intl_deployment/immigration.html")

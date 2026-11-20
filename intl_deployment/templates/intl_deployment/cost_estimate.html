@@ -10,6 +10,12 @@
 </form>
 
 {% if data %}
+    <!-- Link to immigration requirements-->
+    <a href="{% url 'intl_deployment:immigration' %}">
+        Immigration requirements
+    </a>
+
+    <!-- financial breakdown -->
     <table>
         <!-- Output table is split into four parts: home pay, assignment benefits, host tax, deductions -->
 
