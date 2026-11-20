@@ -12,7 +12,7 @@ def determine_ss_residency(home_country, host_country, start_date, end_date):
     if host_country.country.name == "United Kingdom":
         if home_country.country.name == "Switzerland":
             # set rule for swiss employees coming to the UK
-            sources = set("https://www.gov.uk/guidance/social-security-contributions-for-workers-coming-to-the-uk-from-the-eea-or-switzerland")
+            sources = {"https://www.gov.uk/guidance/social-security-contributions-for-workers-coming-to-the-uk-from-the-eea-or-switzerland"}
 
             # calculate the number of years
             date_difference = relativedelta(end_date, start_date)

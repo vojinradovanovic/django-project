@@ -48,7 +48,7 @@ def calculate_swiss_tax(base, region, city):
         taxes["municipal"] = base_cantonal_tax * Decimal("1.19")
 
         # add source to the city of zurich tax calculation
-        sources["municipal"] = set("https://swisstaxcalculator.estv.admin.ch/#/taxdata/tax-rates")
+        sources["municipal"] = {"https://swisstaxcalculator.estv.admin.ch/#/taxdata/tax-rates"}
 
     # round all taxes before outputting;
     # all taxes in the tax calculator are expressed as round numbers
