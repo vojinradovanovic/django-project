@@ -70,7 +70,8 @@ def generate_cost_estimate_data(input):
         "home_income_tax": set(),
         "home_social_security": set(),
         "home_income_tax": set(),
-        "home_income_tax_first_year": set()
+        "home_income_tax_first_year": set(),
+        "other": set()
     }
     # calculate base pay
     home_base_pay = sum(home_pay.values())
@@ -93,10 +94,11 @@ def generate_cost_estimate_data(input):
     # calculate taxable pay in host country
     host_base_pay = (home_base_pay - sum(deductions.values())) / input["exchange_rate"]
 
-    # calculate taxable relocation allowance
+    # calculate taxable relocation allowance and add source
     taxable_relocation = max(Decimal("0"), assignment_benefits["moving_costs"] \
                                             + assignment_benefits["temporary_housing"] \
                                             - Decimal("8000"))
+    sources["other"].add("https://www.gov.uk/expenses-and-benefits-relocation/whats-exempt")
 
     # add benefits
     host_base_pay += Decimal("12") * assignment_benefits["housing"] # housing is pcm
