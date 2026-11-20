@@ -184,3 +184,59 @@ def generate_cost_estimate_data(input):
     }
     
     return data
+
+def generate_immigration_data(input):
+    data = {
+        "visa": [],
+        "business_visit": [],
+        "passport_requirements": [],
+        "employer_requirements": []
+    }
+
+    # the assumption is that this is similar to the test case, a Swiss citizen coming to the UK
+    # for <= 2 years, so the output is generated to accommodate that
+
+    # Passport requirements
+    data["passport_requirements"].append({
+        "description": "Valid passport;",
+        "comments": ('The employee must hold a valid passport.\n' + \
+                     'If it expires during the assignment, it should be renewed.'),
+        "source": "https://www.gov.uk/guidance/visiting-the-uk-as-an-eu-eea-or-swiss-citizen"
+    })
+
+    # Work visa
+    if input["host_country"].country.name == "United Kingdom":
+        if input["home_country"].country.name == "Switzerland":
+            data["visa"].append({
+                "description": "Senior or Specialist Worker;",
+                "comments": (""),
+                "source": "https://www.gov.uk/senior-specialist-worker-visa"
+            })
+
+            data["employer_requirements"].append({
+                "description": "Certificate of Sponsorship;",
+                "comments": ('The UK sponsor must assign a valid Certificate\n' + \
+                                'of Sponsorship to the employee.'),
+                "source": "https://www.gov.uk/uk-visa-sponsorship-employers"
+            })
+
+    # Business visits
+    if input["host_country"].country.name == "United Kingdom":
+        if input["citizenship"].country.name == "Switzerland":
+            data["business_visit"].append({
+                "description": "Electronic Travel Authorisation;",
+                "comments": ('Swiss citizens generally need an ETA for permitted\n' + \
+                                'short business visits to the UK.'),
+                "source": "https://www.gov.uk/eta"
+            })
+
+    # social security contributions for <= 2 years swiss arivals in the UK
+    data["employer_requirements"].append({
+        "description": 'Certificate of coverage\n(Swiss social security authority);',
+        "comments": 'Not obliged to pay UK social security contributions if\n' + \
+                    'the assignment period is 2 years at most\n\n' + \
+                    'the social security authority is determined by place of residence',
+        "source": "https://www.gov.uk/guidance/social-security-contributions-for-workers-coming-to-the-uk-from-the-eea-or-switzerland"
+    })
+
+    return data

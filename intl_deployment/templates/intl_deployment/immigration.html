@@ -1,5 +1,26 @@
 <h1>Immigration</h1>
 
+<!-- Answer table -->
+<table>
+    {% for key, value in immigration_data.items %}
+        <tr>
+            <th>{{ key }}</th>
+        </tr>
+
+        {% for item in value %}
+            <tr>
+                <td>{{ item.description|linebreaksbr }}</td>
+                <td>{{ item.comments|linebreaksbr }}</td>
+                <td>
+                    <a href="{{ item.source }}" target="_blank">
+                            link
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endfor %}
+</table>
+
 <!-- Link back to cost estimate -->
 <a href="{% url 'intl_deployment:cost_estimate' %}">
 Back to cost estimate
