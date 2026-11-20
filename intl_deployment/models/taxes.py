@@ -22,7 +22,7 @@ class TaxBracket(models.Model):
 
     min_salary_threshold = models.PositiveIntegerField()   # tax is applicable above this threshold
 
-    source = models.URLField(max_length=255, null=True)
+    source = models.URLField(max_length=255)
 
     def __str__(self):
         return str(self.tax_authority.name) + ", " + str(self.tax_rate) + "%"

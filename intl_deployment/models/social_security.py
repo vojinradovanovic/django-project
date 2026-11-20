@@ -14,7 +14,7 @@ class SocialSecurityTax(models.Model):
 
     description = models.CharField(max_length=100)
 
-    source = models.URLField(max_length=255, null=True)
+    source = models.URLField(max_length=255)
 
     def __str__(self):
         return str(self.country.country.name) + ", " + str(self.description)
