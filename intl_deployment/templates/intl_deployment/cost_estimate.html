@@ -1,6 +1,8 @@
 <!-- Load apps -->
 {% load humanize %}
 
+<h1>Tax calculator</h1>
+
 <form action="{% url 'intl_deployment:cost_estimate' %}" method="post">
     {% csrf_token %}
     {{ form }}
