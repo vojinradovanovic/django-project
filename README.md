@@ -5,6 +5,9 @@
 - **Before** running the project, make sure that all the required packages are installed. To do so, write the command `python -m pip install -r requirements.txt` in the terminal.
 - To run, write the command `python manage.py runserver` in the terminal. The terminal will then create a link to a local host (e.g. http://127.0.0.1:8000/), which you can open in a browser of your choice.
 
+### **To run tests**
+- Write the terminal command `python manage.py test`
+
 ### **Admin managing**
 - If you want to view the admin/ page, you should write the url (e.g. http://127.0.0.1:8000/admin/) directly into the search browser while the project is running. Once there, the log in details are as:
     - username `admin`
